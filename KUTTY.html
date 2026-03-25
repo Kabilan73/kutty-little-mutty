@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* glowing background */
+body::before {
+    content: "";
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+    animation: glow 8s infinite alternate;
+}
+
+@keyframes glow {
+    from { transform: translate(-30%, -30%); }
+    to { transform: translate(30%, 30%); }
+}
+
+.container {
+    text-align: center;
+    background: rgba(255,255,255,0.15);
+    padding: 25px;
+    border-radius: 25px;
+    backdrop-filter: blur(15px);
+    width: 90%;
+    max-width: 350px;
+    box-shadow: 0 0 30px rgba(255,255,255,0.3);
+    z-index: 1;
+}
+
+h1 {
+    color: white;
+    font-size: 1.9rem;
+}
+
+p {
+    color: white;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    position: relative;
+    height: 120px;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.2s;
+    touch-action: manipulation;
+}
+
+#yesBtn {
+    background: #ff4d6d;
+    color: white;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+#noBtn {
+    background: #555;
+    color: white;
+    position: absolute;
+}
+
+#letter {
+    display: none;
+    color: white;
+    margin-top: 20px;
+    font-size: 1rem;
+    white-space: pre-line;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.heart {
+    position: absolute;
+    color: #fff;
+    animation: float 5s linear infinite;
+}
+
+@keyframes float {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-100vh); opacity: 0; }
+}
+
+#finalMsg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(255,255,255,0.9);
+    padding: 30px;
+    border-radius: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+    color: #ff4d6d;
+    transition: 0.5s;
+    z-index: 2;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+    <h1>Would You Forgive Me? 😢💔</h1>
+    <p>I’m really sorry… I didn’t mean to hurt you 😔</p>
+
+    <div class="buttons">
+        <button id="yesBtn">Yes ❤️</button>
+        <button id="noBtn">No 😢</button>
+    </div>
+
+    <div id="letter"></div>
+</div>
+
+<div id="finalMsg">I love you ❤️🥺</div>
+
+<script>
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const letter = document.getElementById("letter");
+const finalMsg = document.getElementById("finalMsg");
+
+let clickCount = 0;
+const maxMoves = 7;
+
+noBtn.style.left = "60%";
+noBtn.style.top = "50%";
+
+/* ✅ Works on mobile + desktop */
+function addTap(element, func) {
+    element.addEventListener("click", func);
+    element.addEventListener("touchend", func);
+}
+
+addTap(noBtn, moveNo);
+addTap(yesBtn, showLetter);
+
+function moveNo(e) {
+    if (e) e.preventDefault();
+
+    clickCount++;
+
+    if (clickCount < maxMoves) {
+
+        let offset = (Math.random() * 120) - 60;
+        let newTop = noBtn.offsetTop + offset;
+
+        newTop = Math.max(20, Math.min(window.innerHeight - 100, newTop));
+        noBtn.style.top = newTop + "px";
+
+        let scale = 1 - (clickCount * 0.1);
+        noBtn.style.transform = `scale(${scale})`;
+
+        noBtn.style.left = (60 + (Math.random()*10 - 5)) + "%";
+
+    } else {
+        noBtn.style.display = "none";
+    }
+}
+
+function showLetter(e) {
+    if (e) e.preventDefault();
+
+    document.querySelector("h1").style.display = "none";
+    document.querySelector("p").style.display = "none";
+    document.querySelector(".buttons").style.display = "none";
+
+    letter.style.display = "block";
+    setTimeout(() => letter.style.opacity = 1, 100);
+
+    startTyping();
+    createHearts();
+}
+
+const text = `Dear kutty,
+
+I’m really sorry for missing our movie night that day… it was completely my fault.
+
+I had something I needed to settle with Shireen and I ended up cancelling last minute. I know that really upset you… especially since we planned it together.
+
+I hate that I made you feel that way. You didn’t deserve that at all.
+
+I honestly really miss you.
+
+Since im a IT student , it took me a day to do this beautifully
+
+I know I messed up
+
+Please forgive me, kutty maaaa… 🥺❤️
+
+You know I love you so much.`;
+
+let index = 0;
+
+function startTyping() {
+    if (index < text.length) {
+        letter.innerHTML += text.charAt(index);
+        index++;
+        setTimeout(startTyping, 25);
+    } else {
+        setTimeout(() => {
+            finalMsg.style.transform = "translate(-50%, -50%) scale(1)";
+        }, 800);
+    }
+}
+
+function createHearts() {
+    setInterval(() => {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML = Math.random() > 0.5 ? "❤️" : "💖";
+
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 5000);
+    }, 250);
+}
+</script>
+
+</body>
+</html>
